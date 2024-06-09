@@ -12,7 +12,7 @@ const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const connectDB = require("./config/db");
-const { formatDate, stripTags, truncate } = require("./helpers/hbs");
+const { formatDate, stripTags, truncate,editIcon } = require("./helpers/hbs");
 
 // load config
 dotenv.config({ path: "./config.env" });
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
 app.engine(
   ".hbs",
   exphbs.engine({
-    helpers: { formatDate, stripTags, truncate },
+    helpers: { formatDate, stripTags, truncate ,editIcon},
     defaultLayout: "main",
     extname: ".hbs",
     handlebars: allowInsecurePrototypeAccess(Handlebars),
@@ -59,6 +59,13 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// set global var
+
+app.use(function(req,res,next){
+res.locals.user = req.user || null
+next()
+})
 
 // static
 
