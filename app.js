@@ -1,16 +1,18 @@
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
-const Handlebars = require('handlebars')
+const Handlebars = require("handlebars");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const exphbs = require("express-handlebars");
-const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+const {
+  allowInsecurePrototypeAccess,
+} = require("@handlebars/allow-prototype-access");
 const passport = require("passport");
 const session = require("express-session");
-const MongoStore = require("connect-mongo")
+const MongoStore = require("connect-mongo");
 const connectDB = require("./config/db");
-const {formatDate}=require('./helpers/hbs')
+const { formatDate, stripTags, truncate } = require("./helpers/hbs");
 
 // load config
 dotenv.config({ path: "./config.env" });
@@ -23,8 +25,8 @@ connectDB();
 const app = express();
 
 // body parser
-app.use(express.urlencoded({extended:false}))
-app.use(express.json())
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
@@ -32,7 +34,15 @@ if (process.env.NODE_ENV === "development") {
 
 //handlebars
 
-app.engine(".hbs", exphbs.engine({ helpers:{formatDate},defaultLayout: "main", extname: ".hbs" , handlebars: allowInsecurePrototypeAccess(Handlebars)}));
+app.engine(
+  ".hbs",
+  exphbs.engine({
+    helpers: { formatDate, stripTags, truncate },
+    defaultLayout: "main",
+    extname: ".hbs",
+    handlebars: allowInsecurePrototypeAccess(Handlebars),
+  })
+);
 app.set("view engine", ".hbs");
 
 // sessions
@@ -41,7 +51,7 @@ app.use(
     secret: "keyboard cat",
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ mongoUrl: process.env.MONGO_URI}),
+    store: new MongoStore({ mongoUrl: process.env.MONGO_URI }),
   })
 );
 
