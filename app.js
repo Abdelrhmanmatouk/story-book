@@ -10,6 +10,7 @@ const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")
 const connectDB = require("./config/db");
+const {formatDate}=require('./helpers/hbs')
 
 // load config
 dotenv.config({ path: "./config.env" });
@@ -31,7 +32,7 @@ if (process.env.NODE_ENV === "development") {
 
 //handlebars
 
-app.engine(".hbs", exphbs.engine({ defaultLayout: "main", extname: ".hbs" , handlebars: allowInsecurePrototypeAccess(Handlebars)}));
+app.engine(".hbs", exphbs.engine({ helpers:{formatDate},defaultLayout: "main", extname: ".hbs" , handlebars: allowInsecurePrototypeAccess(Handlebars)}));
 app.set("view engine", ".hbs");
 
 // sessions
