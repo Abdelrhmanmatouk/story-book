@@ -41,7 +41,7 @@ router.get('/:id',async(req,res)=>{
     if(!story){
       return res.render("errors/404");
     }
-    res.render('/stories/show',{story})
+    res.render("stories/show",{story})
   } catch (err) {
     console.error(err);
     res.render("errors/404");
