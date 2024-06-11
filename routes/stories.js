@@ -32,5 +32,21 @@ router.get('/',ensureAuth,async(req,res)=>{
 
 })
 
+// edit stories
+router.get('/edit/:id',async(req,res)=>{
+  const story = await Story.findOne({_id: req.params.id}).lean()
+  if (!story){
+    res.render('errors/404')
+  }
+  // check owner
+  if(story.user != req.user){
+    res.redirect('/stories')
+  }else{
+    res.render('stories/edit',{
+      story
+    })
+  }
+})
+
 
 module.exports = router
