@@ -35,22 +35,21 @@ router.get("/", ensureAuth, async (req, res) => {
 });
 
 // get single story
-router.get('/:id',async(req,res)=>{
+router.get("/:id", ensureAuth, async (req, res) => {
   try {
-    const story = await Story.findById(req.params.id).populate('user').lean()
-    if(!story){
+    const story = await Story.findById(req.params.id).populate("user").lean();
+    if (!story) {
       return res.render("errors/404");
     }
-    res.render("stories/show",{story})
+    res.render("stories/show", { story });
   } catch (err) {
     console.error(err);
     res.render("errors/404");
   }
-
-})
+});
 
 // edit stories
-router.get("/edit/:id", async (req, res) => {
+router.get("/edit/:id", ensureAuth, async (req, res) => {
   try {
     const story = await Story.findOne({ _id: req.params.id }).lean();
     if (!story) {
@@ -72,7 +71,7 @@ router.get("/edit/:id", async (req, res) => {
 
 // update stories
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", ensureAuth, async (req, res) => {
   try {
     let story = await Story.findById(req.params.id);
     if (!story) {
@@ -97,7 +96,7 @@ router.put("/:id", async (req, res) => {
 
 // delete stories
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", ensureAuth, async (req, res) => {
   try {
     let story = await Story.findById(req.params.id);
     if (!story) {
@@ -116,4 +115,20 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// get stories for a spec user
+
+router.get("/user/:userid", ensureAuth, async (req, res) => {
+  try {
+    const stories = await Story.find({
+      user: req.params.userid,
+      status: "public",
+    })
+      .populate("user")
+      .lean();
+    res.render("stories/index", { stories });
+  } catch (err) {
+    console.error(err);
+    res.render("errors/500");
+  }
+});
 module.exports = router;
