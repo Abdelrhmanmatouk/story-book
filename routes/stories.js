@@ -48,5 +48,25 @@ router.get('/edit/:id',async(req,res)=>{
   }
 })
 
+// update stories 
+
+router.put('/:id',async(req,res)=>{
+let story = await Story.findById(req.params.id)
+if (!story){
+  res.render('errors/404')
+}
+
+  // check owner
+  if(story.user != req.user){
+    res.redirect('/stories')
+  }else{
+    story = await Story.findByIdAndUpdate(req.params.id,req.body,{
+      new:true,
+      runValidators:true
+    })
+    res.redirect('/dashboard')
+  }
+
+})
 
 module.exports = router
